@@ -1,15 +1,17 @@
-using MoonSharp.Interpreter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using XLua;
 
 public class MoonshineTest : MonoBehaviour
 {
     // Start is called before the first frame update
+    LuaEnv luaenv;
     void Start()
     {
+        luaenv = new LuaEnv();
         StartCoroutine(PerformanceTests());
     }
 
@@ -58,21 +60,19 @@ public class MoonshineTest : MonoBehaviour
 	        return x + y
 	    ";
         const int iterations = 100;
-        double counter = 0.0;
+        long counter = 0;
 
         // Parse the script
-        Script script = new Script();
-        DynValue func = script.LoadString(code);
+        var chunk = luaenv.LoadString(code);
 
         // Run the script
         GC.Collect();
-        var args = new DynValue[0];
 
         var time = Time.realtimeSinceStartupAsDouble;
         for (int i = 0; i < iterations; ++i)
         {
-            DynValue result = script.Call(func, args);
-            counter += result.Number;
+            var results = chunk.Call();
+            counter += (long)results[0];
         }
         time = Time.realtimeSinceStartupAsDouble - time;
 
@@ -85,7 +85,8 @@ public class MoonshineTest : MonoBehaviour
         string script = @"    
 		-- defines a factorial function
 	    ";
-        Script.RunString(script);
+
+        luaenv.DoString(script);
 
         stopWatch.Stop();
         TimeSpan ts = stopWatch.Elapsed;
@@ -97,7 +98,7 @@ public class MoonshineTest : MonoBehaviour
     {
         Stopwatch stopWatch = new Stopwatch();
         stopWatch.Start();
-        double total = 0;
+        long total = 0;
 
         total += MoonSharpFactorial();
 
@@ -111,7 +112,7 @@ public class MoonshineTest : MonoBehaviour
 
 
 
-    double MoonSharpFactorial()
+    long MoonSharpFactorial()
     {
         string script = @"    
 		-- defines a factorial function
@@ -134,9 +135,8 @@ public class MoonshineTest : MonoBehaviour
 	
 	    return total";
 
-
-        DynValue res = Script.RunString(script);
-        return res.Number;
+       var results =  luaenv.DoString(script);
+        return ((long)results[0]);
     }
 
     void PerformanceTestCSharp()
