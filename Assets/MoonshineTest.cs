@@ -64,19 +64,17 @@ public class MoonshineTest : MonoBehaviour
         // Parse the script
         Script script = new Script();
         DynValue func = script.LoadString(code);
-        
+
         // Run the script
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.Start();
+        var time = Time.realtimeSinceStartupAsDouble;
         for (int i = 0; i < iterations; ++i)
         {
             DynValue result = script.Call(func);
             counter += result.Number;
         }
-        stopWatch.Stop();
-        TimeSpan ts = stopWatch.Elapsed;
+        time = Time.realtimeSinceStartupAsDouble - time;
 
-        UnityEngine.Debug.Log($"LUA addition RunTime {ts.Ticks} result (x{iterations}) {counter}");
+        UnityEngine.Debug.Log($"LUA addition RunTime {time * 1000.0} ms. Result (x{iterations}) {counter}");
     }
     void PerformanceTestEmptyLUA()
     {
