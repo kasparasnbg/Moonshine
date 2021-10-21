@@ -96,25 +96,7 @@ public class MoonshineTest : MonoBehaviour
 
     void PerformanceTestFactorialLUA()
     {
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.Start();
-        long total = 0;
-
-        total += MoonSharpFactorial();
-
-        stopWatch.Stop();
-
-        TimeSpan ts = stopWatch.Elapsed;
-
-        UnityEngine.Debug.Log($"LUA RunTime {ts.Ticks} total {total}");
-
-    }
-
-
-
-    long MoonSharpFactorial()
-    {
-        string script = @"    
+        string code = @"    
 		-- defines a factorial function
 		function fact (n)
 			if (n == 0) then
@@ -135,9 +117,20 @@ public class MoonshineTest : MonoBehaviour
 	
 	    return total";
 
-       var results =  luaenv.DoString(script);
-        return ((long)results[0]);
+        var chunk = luaenv.LoadString(code);
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+        
+        long total = (long)chunk.Call()[0];
+
+        stopWatch.Stop();
+
+        TimeSpan ts = stopWatch.Elapsed;
+
+        UnityEngine.Debug.Log($"LUA RunTime {ts.Ticks} total {total}");
+
     }
+
 
     void PerformanceTestCSharp()
     {
