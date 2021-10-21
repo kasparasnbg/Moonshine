@@ -37,17 +37,16 @@ public class MoonshineTest : MonoBehaviour
         double counter = 0.0;
 
         // Run the script
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.Start();
+        var time = Time.realtimeSinceStartupAsDouble;
         for (int i = 0; i < iterations; ++i)
         {
             double result = Add(10, 5);
             counter += result;
         }
-        stopWatch.Stop();
-        TimeSpan ts = stopWatch.Elapsed;
+        time = Time.realtimeSinceStartupAsDouble - time;
 
-        UnityEngine.Debug.Log($"C# addition RunTime {ts.Ticks} result (x{iterations}) {counter}");
+
+        UnityEngine.Debug.Log($"C# addition RunTime {time * 1000.0} ms. Result (x{iterations}) {counter}");
     }
     void PerformanceTestAdditionLUA()
     {
