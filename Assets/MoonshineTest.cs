@@ -23,7 +23,31 @@ public class MoonshineTest : MonoBehaviour
             PerformanceTestFactorialLUA();
             PerformanceTestEmptyLUA();
             PerformanceTestAdditionLUA();
+            PerformanceTestAdditionCSharp();
         }
+    }
+    void PerformanceTestAdditionCSharp()
+    {
+        // Vars
+        double Add(double x, double y)
+        {
+            return x + y;
+        }
+        const int iterations = 100;
+        double counter = 0.0;
+
+        // Run the script
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+        for (int i = 0; i < iterations; ++i)
+        {
+            double result = Add(10, 5);
+            counter += result;
+        }
+        stopWatch.Stop();
+        TimeSpan ts = stopWatch.Elapsed;
+
+        UnityEngine.Debug.Log($"C# addition RunTime {ts.Ticks} result (x{iterations}) {counter}");
     }
     void PerformanceTestAdditionLUA()
     {
