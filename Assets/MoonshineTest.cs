@@ -27,8 +27,6 @@ public class MoonshineTest : MonoBehaviour
     }
     void PerformanceTestAdditionLUA()
     {
-        double result = 0;
-         
         Stopwatch stopWatch = new Stopwatch();
         stopWatch.Start();
         string script = @"    
