@@ -66,10 +66,13 @@ public class MoonshineTest : MonoBehaviour
         DynValue func = script.LoadString(code);
 
         // Run the script
+        GC.Collect();
+        var args = new DynValue[0];
+
         var time = Time.realtimeSinceStartupAsDouble;
         for (int i = 0; i < iterations; ++i)
         {
-            DynValue result = script.Call(func);
+            DynValue result = script.Call(func, args);
             counter += result.Number;
         }
         time = Time.realtimeSinceStartupAsDouble - time;
