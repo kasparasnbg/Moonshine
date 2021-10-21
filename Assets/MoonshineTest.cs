@@ -27,20 +27,32 @@ public class MoonshineTest : MonoBehaviour
     }
     void PerformanceTestAdditionLUA()
     {
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.Start();
-        string script = @"    
+        // Vars
+        const string code = @"    
 		    local x = 10
             local y = 5
   
 	        return x + y
 	    ";
-        DynValue res = Script.RunString(script);
+        const int iterations = 100;
+        double counter = 0.0;
 
+        // Parse the script
+        Script script = new Script();
+        DynValue func = script.LoadString(code);
+        
+        // Run the script
+        Stopwatch stopWatch = new Stopwatch();
+        stopWatch.Start();
+        for (int i = 0; i < iterations; ++i)
+        {
+            DynValue result = script.Call(func);
+            counter += result.Number;
+        }
         stopWatch.Stop();
         TimeSpan ts = stopWatch.Elapsed;
 
-        UnityEngine.Debug.Log($"LUA addition RunTime {ts.Ticks} result {res.Number}");
+        UnityEngine.Debug.Log($"LUA addition RunTime {ts.Ticks} result (x{iterations}) {counter}");
     }
     void PerformanceTestEmptyLUA()
     {
